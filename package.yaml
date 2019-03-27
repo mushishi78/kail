@@ -1,0 +1,37 @@
+name:                kail
+version:             0.1.0.0
+github:              "mushishi78/kail"
+license:             BSD3
+author:              "Max White"
+maintainer:          "mushishi78@gmail.com"
+copyright:           "2019 Max White"
+
+extra-source-files:
+- README.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/mushishi78/kail#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+
+library:
+  source-dirs: src
+
+executables:
+  kail-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - kail
+    - optparse-applicative
