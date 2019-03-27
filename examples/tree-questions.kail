@@ -1,0 +1,114 @@
+kail ./task.kail.schema
+
+task
+    label
+        en
+            > Trees
+    select-option
+        id
+            > ready
+        label
+            en
+                > Are you ready to answer questions about trees?
+                >
+                > Yes I am because I am a tree person.
+                > No I am not, please wait.
+                >
+        option
+            value
+                > yes
+            label
+                en
+                    > Yes
+        option
+            value
+                > no
+            label
+                en
+                    > No
+
+    #// This is a comment
+
+    show
+        if
+            > #ready is yes
+        context
+            id
+                > tree-audit
+            label
+                en
+                    > Tree Audit
+            select-context
+                multiple
+                    > true
+                repeat
+                    > true
+                url
+                    > https://task-task.com/examples/tree-subjects.xml
+                label
+                    en
+                        > Pick a tree to audit
+                pick-from
+                    image
+                    nearby
+                    search
+            text
+                id
+                    > great-tree
+                label
+                    en
+                        > Describe what makes this tree great.
+            number
+                id
+                    > branches
+                min
+                    > 1
+                max
+                    > 500
+                step
+                    > 1
+                label
+                    en
+                        > How many branches does it have?
+            select-option
+                id
+                    > seed-dispersal
+                label
+                    en
+                        > How are the seeds dispersed?
+                option
+                    value
+                        > wind
+                    label
+                        en
+                            > Wind
+                option
+                    value
+                        > animal
+                    label
+                        en
+                            > Animal
+                option
+                    value
+                        > other
+                    label
+                        en
+                            > Other
+            show
+                if
+                    > #seed-dispersal is other
+                text
+                    id
+                        > other-details
+                    label
+                        en
+                            > Could you decribe how it disperses it's seeds?
+    show
+        if
+            > #ready is no
+        explanation
+            id
+                > dont-worry
+            label
+                en
+                    > Okay, well don't worry. Take your time getting ready and start again when you are.
