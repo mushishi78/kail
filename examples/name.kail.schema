@@ -1,0 +1,5 @@
+(top name)
+(maxOccurs 1 name)
+(regex
+    (name "[\w\-\s]+")
+)

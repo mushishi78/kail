@@ -1,4 +1,4 @@
-kail ./task.kail.schema
+: task.kail.schema
 
 task
     label
@@ -27,7 +27,7 @@ task
                 en
                     > No
 
-    #// This is a comment
+    # This is a comment
 
     show
         if
