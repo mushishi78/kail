@@ -68,5 +68,6 @@ run (Validate opts) = do
     contents <- case file opts of
         Just f  -> readFile f
         Nothing -> getContents
-    Kail.parse contents (bail opts)
+    let ast = Kail.parse contents
+    print ast
 run (Naked opts) = if version opts then putStrLn "1.0.0" else putStrLn "Naked!"
