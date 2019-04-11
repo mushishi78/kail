@@ -21,14 +21,15 @@ module Main where
 
 import qualified Kail
 import           Options.Applicative
+import Filesystem.Path.CurrentOS
+import System.Directory
 
 data Command
     = Validate ValidateOptions
     | Naked NakedOptions
 
 data ValidateOptions = ValidateOptions {
-    file :: Maybe String,
-    bail :: Bool
+    file :: Maybe String
 }
 
 newtype NakedOptions = NakedOptions {
@@ -47,7 +48,7 @@ parser =
         <|> nakedParser
   where
     validateParser =
-        Validate <$> (ValidateOptions <$> fileOption <*> bailOption) <**> helper
+        Validate <$> (ValidateOptions <$> fileOption) <**> helper
     nakedParser = Naked <$> (NakedOptions <$> versionOption) <**> helper
 
     fileOption :: Parser (Maybe String)
@@ -58,8 +59,6 @@ parser =
             <> short 'f'
             <> metavar "FILE"
             <> help "FILE to be validated"
-    bailOption = switch $ long "bail" <> short 'b' <> help
-        "Stop when the first error is found"
     versionOption = switch $ long "version" <> short 'v' <> help
         "Display the version of kail"
 
@@ -68,6 +67,17 @@ run (Validate opts) = do
     contents <- case file opts of
         Just f  -> readFile f
         Nothing -> getContents
-    let ast = Kail.parse contents
-    print ast
+    cwd <- case file opts of
+        Just f  -> return $ parent (decodeString f)
+        Nothing -> decodeString <$> getCurrentDirectory
+    case Kail.parse contents of
+        Nothing -> putStrLn "Parse failure"
+        (Just ast) -> case Kail.errors ast of
+            (e:errs) -> print (e:errs)
+            [] -> case Kail.schema ast of
+                Nothing -> return ()
+                (Just path) -> do
+                    schemaContents <- readFile $ encodeString $ cwd <> (decodeString path)
+                    print ast
+                    print schemaContents
 run (Naked opts) = if version opts then putStrLn "1.0.0" else putStrLn "Naked!"

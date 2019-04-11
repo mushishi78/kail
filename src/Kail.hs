@@ -13,6 +13,8 @@ module Kail
     ( parse
     , tokenize
     , createAST
+    , AST (..)
+    , Token (..)
     )
 where
 
