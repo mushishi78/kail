@@ -33,10 +33,10 @@ data Command
     | Naked NakedOptions
 
 data MainError =
-    DataFileReadFail |
+    DataFileReadFail IOException |
     ParseFail |
     ParseErrors Kail.AST |
-    SchemaFileReadFail
+    SchemaFileReadFail IOException
 
 type MainT a = ExceptT MainError IO a
 
@@ -107,18 +107,18 @@ run (Validate opts) = either renderError return =<< runExceptT run'
 
 renderError :: MainError -> IO ()
 renderError err = case err of
-    DataFileReadFail -> putStrLn "Failed to read kail data file"
+    DataFileReadFail ioException -> putStrLn $ "Failed to read kail data file: " ++ show ioException
     ParseFail -> putStrLn "Failed to parse kail data file"
     (ParseErrors ast) -> do
         putStrLn $ "Parse errors: " ++ show (Kail.errors ast)
         putStrLn $ "Parse warnings: " ++ show (Kail.warnings ast)
-    SchemaFileReadFail -> putStrLn "Failed to read kail schema file"
+    SchemaFileReadFail ioException -> putStrLn $ "Failed to read kail schema file: " ++ show ioException
 
-safeIO :: MainError -> IO a -> MainT a
-safeIO err io = ExceptT $ liftIO $ try io >>= return . (first mapError)
+safeIO :: (IOException -> MainError) -> IO a -> MainT a
+safeIO mainError io = ExceptT $ liftIO $ try io >>= return . (first mapError)
     where
         mapError :: IOException -> MainError
-        mapError _ = err
+        mapError ioException = mainError ioException
 
 ignoreNothing :: Maybe a -> a
 ignoreNothing (Just a) = a
