@@ -10,18 +10,19 @@
 #-}
 
 module Kail
-    ( parse
+    ( parseDataFile
+    , parseSchemaFile
     , tokenize
     , createAST
     , AST (..)
     , Token (..)
+    , Schema (..)
     )
 where
 
 import           Tokens
 import           AST
+import           Schema
 
-parse :: String -> Maybe AST
-parse contents = createAST <$> tokenize contents
-
-
+parseDataFile :: String -> Maybe AST
+parseDataFile contents = createAST <$> tokenize contents

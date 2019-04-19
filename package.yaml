@@ -23,6 +23,8 @@ dependencies:
 - system-filepath
 - directory
 - transformers
+- megaparsec
+- text
 
 library:
   source-dirs: src

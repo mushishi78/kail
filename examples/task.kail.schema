@@ -1,5 +1,16 @@
-(top task)
+(# An example schema file)
+
+(#
+    The children function establishes which elements can be found inside a parent.
+    By default elements are considered to be value elements unless they have children
+    specified here.
+)
 (children
+    (#
+        The top level is denoted by the ^ operator.
+        So here only tasks may appear at the top level of task data file.
+    )
+    (^ task)
     (task label send-results context number select-option text explanation show)
     (send-results url)
     (context id completedAfter label select-context context number select-option text explanation show)
@@ -8,14 +19,22 @@
     (number id min max step label)
     (option value label)
     (pick-from image nearby schedule search)
-    ((/ pick-from image))
-    ((/ pick-from nearby))
-    ((/ pick-from schedule) url)
-    ((/ pick-from search))
     (select-context multiple repeat url label pick-from)
     (select-option id label option)
     (show if context number select-option text explanation show)
     (text id label)
+
+    (#
+        The / function creates a path that this claim is true for.
+        So this means that schedules inside a pick-from must have only a url.
+        But schedules outside of a pick-from have no such constraint
+    )
+    ((/ pick-from schedule) url)
+
+    (# These are meant to be empty keys without values)
+    ((/ pick-from image))
+    ((/ pick-from nearby))
+    ((/ pick-from search))
 )
 (minOccurs 1 id if value url label select-context)
 (maxOccurs 1 id if value url label select-context)

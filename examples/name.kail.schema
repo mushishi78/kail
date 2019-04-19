@@ -1,4 +1,6 @@
-(top name)
+(children
+    (^ name)
+)
 (maxOccurs 1 name)
 (regex
     (name "[\w\-\s]+")

@@ -27,6 +27,7 @@ import Control.Monad.Trans.Except
 import Control.Monad.IO.Class
 import Control.Exception
 import Data.Bifunctor
+import qualified Data.Text.IO as TIO
 
 data Command
     = Validate ValidateOptions
@@ -91,7 +92,7 @@ run (Validate opts) = either renderError return =<< runExceptT run'
                 Nothing -> liftIO $ FP.decodeString <$> getCurrentDirectory
 
             -- Parse the data file into an ast
-            ast <- ExceptT $ return $ maybe (Left ParseFail) Right $ Kail.parse dataFile
+            ast <- ExceptT $ return $ maybe (Left ParseFail) Right $ Kail.parseDataFile dataFile
 
             -- Do not continue if there are parse errors
             _ <- ExceptT $ return $ if null (Kail.errors ast) then Right () else Left $ ParseErrors ast
@@ -99,10 +100,9 @@ run (Validate opts) = either renderError return =<< runExceptT run'
             -- Read the schema file
             let schemaPath = FP.decodeString $ ignoreNothing $ Kail.schema ast
             let schemaPathFromCWD = FP.encodeString $ dir <> schemaPath
-            schemaFile <- safeIO SchemaFileReadFail $ readFile schemaPathFromCWD
+            schemaFile <- safeIO SchemaFileReadFail $ TIO.readFile schemaPathFromCWD
 
-            liftIO $ print ast
-            liftIO $ print schemaFile
+            _ <- liftIO $ Kail.parseSchemaFile schemaFile
             return ()
 
 renderError :: MainError -> IO ()
